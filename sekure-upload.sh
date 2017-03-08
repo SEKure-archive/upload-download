@@ -4,6 +4,7 @@ bucket="sekure-archive"
 s3Key=""
 s3Secret="" # pass these in
 
+
 currentPath="${PWD}"
 
 
@@ -11,11 +12,16 @@ function uploadS3() {
   # path=$1
   # file=$2
   fullPath="${1}"
-  awsPath=`echo "${fullPath}" | sed 's|'"${currentPath}/"'||g'` #  Escape spaces
-  # awsPath=`echo $path | sed 's/^.*\.//'`
+  #  Keeps folder structure
+  # awsPath=`echo "${fullPath}" | sed 's|'"${currentPath}/"'||g'` #  Escape spaces
+
+  now=$(date +"%m-%d-%Y-%s")
+  awsPath=`echo "${fullPath##*/}-${now}"`
   echo "${awsPath}"
 
-  #objectName=${path}${file}
+
+
+  objectName=${path}${file}
   resource="/${bucket}/${awsPath}"
   contentType="text/plain"    #Change later
   dateValue=$(date -R)
@@ -29,11 +35,6 @@ function uploadS3() {
             https://${bucket}.s3.amazonaws.com/${awsPath}
 }
 
-# Gets directory
-#echo $(dirname "${1}") | cut -d '.' -f 1
-
-#echo "file: ${i##*/}"
-#d="/"
 recurse() {
  for i in "$1"/*;do
     if [ -d "$i" ];then
