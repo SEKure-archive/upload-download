@@ -3,6 +3,15 @@
 bucket="sekure-archive"
 s3Key=""
 s3Secret="" # pass these in
+encryption="x-amz-server-side-encryption: AES256"   # Server Side Encryption
+#AWS RESTFUL API
+#http://docs.aws.amazon.com/AmazonS3/latest/dev/SSEUsingRESTAPI.html
+
+#Encryption.  Can configure server or client side based on your needs
+#See Documentation
+#https://aws.amazon.com/blogs/security/how-to-prevent-uploads-of-unencrypted-objects-to-amazon-s3/
+#http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectPUT.html
+
 
 
 currentPath="${PWD}"
