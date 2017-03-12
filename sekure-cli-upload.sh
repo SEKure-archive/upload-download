@@ -11,21 +11,24 @@ uploadDir=$(echo "${PWD}/upload")
 
 upload(){
   filePath=$1
-  awsPath=$(echo "${1##*/}-${2}")
+  awsPath=$2
   `aws s3 cp "${filePath}" "s3://${bucketName}/${awsPath}" --sse`
 }
 
 sqs(){
   filePath=$1
-  echo "file name"
-  echo $filePath
-  fileName=$(echo "${1##*/}")
-  timeStamp=$2
+  fileName=$(echo "${filePath##*/}")
+  awsPath="${2}"
+  timeStamp=$3
+  localDir=`echo "${filePath}" |  sed "s#$uploadDir##"`
+  localDir=`dirname "${localDir}"`
+  mime=`file -b ${filePath}`
+  size=$(wc -c <"$filePath")
 
-  dir=`echo "${filePath}" |  sed "s#$uploadDir/##"`
-  echo directory
-  echo $dir
-  # `aws sqs send-message --queue-url "${sqsUrl}" --message-body "Information about the largest city in Any Region." `
+  message=`"{\"filename\" : ${fileName}, \"s3path\" : ${awsPath}, \"directory\" : '${localDir}', \"time\" : ${timeStamp}, \"mime\" : ${mime}}"`
+  echo "${message}"
+  `aws sqs send-message --queue-url "${sqsUrl}"    --message-body "{\"filename\" : ${fileName}, \"s3path\" : ${awsPath}, \"directory\" : '${localDir}', \"time\" : ${timeStamp}, \"mime\" : ${mime}}"`
+  # `aws sqs send-message --queue-url "${sqsUrl}" --message-body "{filename : ${filename}, s3path : ${awsPath} directory : ${localDir}, time : ${timeStamp}, mime : ${mime}  }"`
 }
 
 moveFiles(){
@@ -45,35 +48,14 @@ recurse() {
     elif [ -f "$i" ]; then
       echo "${i}"
       timeStamp=$(date +"%Y-%m-%d-%H-%M-%S")
-      fileName="${i##*/}"
-      # upload "${i}" "${timeStamp}"
-      sqs "${i}" "${timeStamp}"
+      awsPath=$(echo "${1##*/}-${timeStamp}")
+      # upload "${i}" "${awsPath}" "${timeStamp}"
+      sqs "${i}" "${awsPath}" "${timeStamp}"
+
     fi
  done
 }
 
 
-
-# recurse() {
-#  for i in "$1"/*;do
-#     if [ -d "$i" ];then
-#       d="$i/"
-#         recurse "{$d}"
-#     # elif [[ "${i##*/}" == "sekure-"* ]]; then
-#     #     echo skip "${i##*/}"
-#     elif [ -f "$i" ]; then
-#     # uploadS3  "${d}" "${i##*/}"
-#     echo "${i}"
-#     timeStamp=$(date +"%Y-%m-%d-%H-%M-%S")
-#     awsPath="${i##*/}"
-#     # upload "${i}" "${awsPath}"
-#     sqs "${i}" "${awsPath}"
-#
-#     fi
-#  done
-# }
-
 recurse "${uploadDir}"
 # moveFiles "${uploadDir}"
-
-# mv  "${uploadDir}" "${archived}"
