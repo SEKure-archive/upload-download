@@ -38,13 +38,23 @@ sqs(){
   localDir=$(dirname "${localDir}")
   mime=$(file -b "${filePath}")
   size=$4
-  # message="{\"filename\" : ${fileName}, \"s3path\" : ${awsPath}, \"directory\" : '${localDir}', \"time\" : ${timeStamp}, \"mime\" : ${mime}, \"size\" : ${size}}"
-  # message=$(printf '{"filename":"%s","s3path":"%s","directory":"%s"}\n' "$fileName" "$awsPath" "$directory")
-  # message='{ "firstAttribute":{ "DataType":"String","StringValue":"hello world" }, "secondAttribute:{ "DataType":"String","StringValue":"goodbye world" }'
-  message=$(printf '{ "firstAttribute":{ "DataType":"String","StringValue":"%s" } }' "$fileName")
-  # message='{ "firstAttribute":{ "DataType":"String","StringValue":"hello world" } }'
-aws sqs send-message --queue-url "${sqsUrl}"    --message-body "Test JSON" --message-attributes "${message}"
-# aws sqs send-message --queue-url "${sqsUrl}"    --message-body "Test JSON" --message-attributes '{ "firstAttribute":{ "DataType":"String","StringValue":"hello world" } }'
+
+# Text Required.  What to put in?
+message="Uploading File"
+
+#Message Attributes can hold 10 JSON objects
+#Supports: String, Binary, Number
+# AWS Documetation wrong, Must be formatted:
+# --message-attributes '{ "firstAttribute":{ "DataType":"String","StringValue":"hello world" } }'
+  json=$(printf '{
+    "filename":{ "DataType":"String","StringValue":"%s" },
+    "directory":{ "DataType":"String","StringValue":"%s" },
+    "s3path":{ "DataType":"String","StringValue":"%s" },
+    "time":{ "DataType":"String","StringValue":"%s" },
+    "mime":{ "DataType":"String","StringValue":"%s" },
+    "size":{ "DataType":"Number","StringValue":"%d" }
+  }' "$fileName" "$localDir" "$awsPath" "$timeStamp" "$mime" "$size")
+aws sqs send-message --queue-url "${sqsUrl}"    --message-body "${message}" --message-attributes "${json}"
 
 }
 
@@ -67,7 +77,7 @@ recurse() {
       if [[ $size < $maxSize ]]; then
         timeStamp=$(date +"%Y-%m-%d-%H-%M-%S")
         awsPath=$(echo "${i##*/}-${timeStamp}")
-        # upload "${i}" "${awsPath}"
+        upload "${i}" "${awsPath}"
         sqs "${i}" "${awsPath}" "${timeStamp}" "${size}"
       else
         echo "Your file is larger then ${maxSize} bytes!"
@@ -78,6 +88,6 @@ recurse() {
 
 echo "Getting ready to archive...."
 recurse "${uploadDir}"
-# moveFiles "${uploadDir}"
-# echo "Moving your files out of upload...."
+moveFiles "${uploadDir}"
+echo "Moving your files out of upload...."
 echo "Done"
