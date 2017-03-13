@@ -9,3 +9,9 @@ unzip awscli-bundle.zip
 sudo ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws
 aws --version
 mkdir "${PWD}/upload/"
+
+#Recieve Files needs jq for parsing json formate in bash
+#  Install jq
+wget -O jq https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64
+chmod +x ./jq
+sudo cp jq /usr/bin
