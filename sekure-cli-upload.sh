@@ -67,7 +67,6 @@ moveFiles(){
 }
 
 
-
 recurse() {
  for i in "$1"/*;do
     if [ -d "$i" ];then
