@@ -39,7 +39,7 @@ upload(){
 
 moveFiles(){
   target=$1
-  timeStamp=$(date +"%Y-%m-%d-%H-%M-%S")
+  timeStamp=$(date +"%Y-%m-%d %H:%M:%S")
   archivedDir=$(echo "${archivedDir}-${timeStamp}")
   mkdir "${archivedDir}"
   mv  "${target}" "${archivedDir}"
@@ -53,7 +53,7 @@ recurse() {
     elif [ -f "$i"  ]; then
       size=$(wc -c <"$i")
       if [[ $size < $maxSize ]]; then
-        timeStamp=$(date +"%Y-%m-%d-%H-%M-%S")
+        timeStamp=$(date +"%Y-%m-%d %H:%M:%S")
         awsPath=$(echo "${i##*/}-${timeStamp}")
         upload "${i}" "${awsPath}"
         sqsupload "${i}" "${awsPath}" "${timeStamp}" "${size}"

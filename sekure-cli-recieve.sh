@@ -1,7 +1,7 @@
 #!/bin/bash
 # Documetation: https://docs.aws.amazon.com/cli/latest/reference/sqs/receive-message.html
 source ./config.sh
-timeStamp=$(date +"%Y-%m-%d-%H-%M-%S")
+timeStamp=$(date +"%Y-%m-%d %H:%M:%S")
 restoreDir=$(echo "${restoreLocation}/restore/restore-${timeStamp}")
 mkdir "${restoreDir}"
 maxMessages=10  #  --max-number-of-messages
