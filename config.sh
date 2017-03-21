@@ -1,11 +1,13 @@
 #!/bin/bash
 ####################  AWS ###############################
 bucketName="sekure-archive"
+region="us-east-1"
 sqsUrl="https://sqs.us-east-1.amazonaws.com/373886653085/"
 sqsUpload="upload" #queue name
 sqsDownload="download"  #queue name
 restoreLocation=$(echo "${PWD}/files")
 maxSize=90000  #Max size of file in bytes
+ec2IP="https://52.2.133.118"
 ####################  AWS ###############################
 
 # Please use the "S3-upload-download" IAM policy for uploading and downloadin files
