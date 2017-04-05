@@ -21,3 +21,18 @@ Make sure that only your account can access your credentals: chmod 600
   The install directions are handled by the install script
   The script will need sudo access to copy the binary file to the user bin.
   https://stedolan.github.io/jq/download/
+
+
+
+  # Please use the "S3-upload-download" IAM policy for uploading and downloadin files
+  # This policy limits acess to S3 buckets named with the "seckur" prefix,  "sekur*"
+  # Access is also limited to "Get" and "Put" commands
+
+  # This file uses the AWS CLI interface.  Please refer to the read me and install file
+  # RESOURCES
+  # S3
+  # http://docs.aws.amazon.com/cli/latest/reference/s3/
+  # http://docs.aws.amazon.com/cli/latest/reference/s3/cp.html
+  # SQS
+  # http://docs.aws.amazon.com/cli/latest/reference/sqs/send-message.html
+  # IAM need SQS and S3 Permitions
