@@ -4,7 +4,7 @@ source ./config.sh
 main(){
   echo "Getting ready to archive...."
   recurse "${uploadDir}"
-  # moveFiles "${uploadDir}"
+  moveFiles "${uploadDir}"
   echo "Moving your files out of upload...."
   echo "Done"
 }
@@ -25,7 +25,7 @@ recurse() {
         fileHash=$(date +"%Y-%m-%d-%H-%M-%S")
         timeStamp=$(date +"%Y-%m-%d %H:%M:")
         s3Path=$(echo "${i##*/}-${fileHash}")
-        # upload "${i}" "${s3Path}"
+        upload "${i}" "${s3Path}"
         updateDB "${i}" "${s3Path}" "${timeStamp}" "${size}"
       else
         echo "Your file is larger then ${maxSize} bytes!"

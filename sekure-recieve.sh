@@ -33,8 +33,10 @@ if [[ $qsize -gt 0 ]]; then
     aws sqs delete-message --queue-url "${sqsUrl}" --receipt-handle "${receipt}"
 
     path=$(echo "${restoreDir}${dir}/${name}")
+    echo $path
+    echo $s3path
 
-    aws s3 cp  "s3://${s3path}" "${path}"
+    aws s3 cp  "s3://${bucketName}/${s3path}" "${path}"
 
     let "qsize--" #counter
 
